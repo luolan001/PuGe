@@ -30,7 +30,7 @@
 	            <form class="form-inline">
 				  <div class="form-group">
 				    <label for="exampleInputEmail2">是否分级：</label>
-				    <select class="form-control" id="scale">
+				    <select class="form-control" id="scale2">
 					  <option value="" selected >全部</option>
 					  <option value="Y">是</option>
 					  <option value="N">否</option>
@@ -39,7 +39,7 @@
 				  
 				  <div class="form-group">
 				    <label for="exampleInputEmail2">基础档案名：</label>
-				    <input type="text" class="form-control" id="baseDocumentName" placeholder="基础档案名">
+				    <input type="text" class="form-control" id="baseDocumentName2" placeholder="基础档案名">
 				  </div>
 				  <button type="button" class="btn btn-success glyphicon glyphicon-search" id="btn_search_b">查询</button>
 				  <button type="button" class="btn btn-primary glyphicon glyphicon-pencil" id="btn_add">添加记录</button>
@@ -244,8 +244,8 @@
 	    				return{
 	    					pageSize:params.pageSize,
 	    					pageNumber:params.pageNumber,
-	    					scale : $("#scale").val(), 
-	    					baseDocumentName : $("#baseDocumentName").val(),
+	    					scale : $("#scale2").val(), 
+	    					baseDocumentName : $("#baseDocumentName2").val(),
 	    					direction: 'asc' 
 	    				};
 	    		    },
@@ -270,6 +270,11 @@
                         $('#addModal').modal('hide');
                         $('#table').bootstrapTable('refresh');
                         layer.msg('添加成功', {time: 3000, icon:6});
+                        
+                        $('#txt_baseDocumentNo')[0].value = ""; 
+                        $('#txt_baseDocumentName')[0].value = "";
+                        $('#txt_scale')[0].value = "";
+                        $('#txt_description')[0].value = "";
                         return;
                     }
                         //捕获页
@@ -306,7 +311,6 @@
         $("#baseDocumentId").val(baseDocumentId);
         $("#baseDocumentNo").val(baseDocumentNo);
         $("#baseDocumentName").val(baseDocumentName);
-       	
         $("#scale").val(scale);
         $("#description").val(description);
         $('#updateModal').modal('show');

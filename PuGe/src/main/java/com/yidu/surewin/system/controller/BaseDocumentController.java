@@ -88,10 +88,7 @@ public class BaseDocumentController {
 		
 		//获取总记录数
 		int total = baseDocumentService.findPageQueryCount(queryMap);
-		System.out.println("---------"+total);
 		returnMap.put("total", total);
-		
-		System.out.println(baseDocuments.size());
 		return returnMap;
 	}
 }
