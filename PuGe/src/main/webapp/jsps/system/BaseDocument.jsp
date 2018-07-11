@@ -10,13 +10,14 @@
     <link href="../../bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="../../bootstrap-3.3.7-dist/bootstrap-table/bootstrap-table.css" rel="stylesheet" type="text/css">
     <link href="../../layer-v3.1.1/layer/mobile/need/layer.css" rel="stylesheet" type="text/css">
+    <link href="../../bootstrap-3.3.7-dist/validator/bootstrap-validator_0.5.3_css_bootstrapValidator.css">
     
     <script src="../../bootstrap-3.3.7-dist/jquery_3.2.1/jquery.min.js"></script>
     <script src="../../bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
     <script src="../../bootstrap-3.3.7-dist/bootstrap-table/bootstrap-table.js"></script>
     <script src="../../bootstrap-3.3.7-dist/bootstrap-table/bootstrap-table-zh-CN.js"></script>
     <script src="../../layer-v3.1.1/layer/layer.js"></script>
-
+	<script src="../../bootstrap-3.3.7-dist/validator/bootstrap-validator_0.5.3_js_bootstrapValidator.js"></script>
 	<base href="<%=basePath%>" />
 </head>
 <body>
@@ -51,7 +52,7 @@
         <table id="table"></table>
 
         <%--弹出层-增加--%>
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal fade" id="myModal" tabindex="-1" role="from" aria-labelledby="myModalLabel">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -61,7 +62,7 @@
                     <div class="modal-body">
                         <form role="form" action="javascript:void(0)" id="addForm">
                         <div class="form-group">
-                            <label for="txt_baseDocumentNo">基础档案编号</label>
+                            <label for="txt_baseDocumentNo">基础档案编号(以档案名简称+编号构成 如：LX000001)</label>
                             <input type="text" name="baseDocumentNo" data-bind="value:orderprice" class="form-control"
                                    id="txt_baseDocumentNo"
                                    placeholder="基础档案编号">
@@ -73,10 +74,12 @@
                                    placeholder="基础档案名">
                         </div>
                         <div class="form-group">
-                            <label for="txt_scale">是否分级</label>
-                            <input type="text" name="scale" data-bind="value:orderuser" class="form-control"
-                                   id="txt_scale"
-                                   placeholder="是否分级">
+                        	<label for="txt_scale">是否分级</label>
+                               <select class="form-control" id="txt_scale" name="scale">
+					 				<option value="请选择" selected >请选择</option>
+					  				<option value="Y">是</option>
+					  				<option value="N">否</option>
+								</select>			
                         </div>
                         <div class="form-group">
                             <label for="txt_description">描述</label>
@@ -116,9 +119,14 @@
                             <div class="form-group">
                                 <input type="text" class="form-control" name="baseDocumentName" id="baseDocumentName">
                             </div>
-                            <div class="form-group">
-                                <input type="text" class="form-control" name="scale" id="scale">
-                            </div>
+                           	<div class="form-group">
+                               <!--  <input type="text" class="form-control" name="scale" id="scale"> -->
+                            	<select class="form-control" id="scale" name="scale">
+					  				<option value="Y" selected>是</option>
+					  				<option value="N">否</option>
+								</select>
+                            </div> 
+                            
                             <div class="form-group">
                                 <input type="text" class="form-control" name="description" id="description">
                             </div>
@@ -221,7 +229,7 @@
                         row.baseDocumentId +
                         '\')"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除</button>';
                     var look= '<button type="button" style="margin-right: 8px;" class="btn btn-success" onclick="javascript:look(\'' +
-                    row.baseDocumentId +
+                    row.baseDocumentNo +
                     '\')"><span class="glyphicon glyphicon-search" aria-hidden="true"></span>查看</button>';
                     return edit + del + look;
                 },
@@ -230,10 +238,142 @@
             paginationPreText: "上一页",
             paginationNextText: "下一页",
         });
-
-        $('#btn_add').on("click", function () {
-            $("#myModal").modal().on("shown.bs.modal", function () {
-            }).on('hidden.bs.modal', function () {
+		//添加验证
+        $("#addForm").bootstrapValidator({
+            message: '输入值不合法',//好像从来没出现过
+            feedbackIcons: {//根据验证结果显示的各种图标
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+            	baseDocumentNo: {
+            		message: '基础档案编号不合法',
+                    validators: {
+                        notEmpty: {//检测非空,radio也可用
+                            message: '基础档案编号必须输入'
+                        },
+                        regexp: {//检测长度
+	                    	 regexp: /^[a-zA-Z]\w{5,17}$/,
+                            message: '所输入的字符不符要求'
+	                    }
+                    }
+                },
+            baseDocumentName: {
+	        		message: '基础档案名不合法',
+	                validators: {
+	                    notEmpty: {//检测非空,radio也可用
+	                        message: '基础档案名必须输入'
+	                    }
+	                }
+	            },
+	            scale: {
+        		message: '未选择分级',
+                validators: {
+                	regexp: {//检测长度
+                   	 regexp: /^[a-zA-Z]$/,
+                       message: '请选择是否分级'
+                   }
+                }
+            }
+            }
+        });
+        $("#addRecord").click(function () {//非submit按钮点击后进行验证，如果是submit则无需此句直接验证
+        	$("#addForm").data('bootstrapValidator').validate();//提交验证
+            if ($("#addForm").data('bootstrapValidator').isValid()) {//获取验证结果，如果成功，执行下面代码
+            	var data = $("#addForm").serializeArray();
+                $.ajax({
+                    url: "baseDocument/addDocument.action",
+                    dataType:"json",
+                    type: "post",
+                    data: data,
+                    success: function(data){
+                        if (data) {
+                            $('#table').bootstrapTable('refresh');
+                            layer.msg('添加成功', {time: 3000, icon:6});
+                            $('#txt_baseDocumentNo')[0].value = ""; 
+                            $('#txt_baseDocumentName')[0].value = "";
+                            $('#txt_scale')[0].value = "";
+                            $('#txt_description')[0].value = "";
+                            $("#addForm").data('bootstrapValidator').resetForm();
+                            return;
+                        }
+                            //捕获页
+                            layer.msg('添加失败', {time: 3000, icon:6});
+                    },
+                    error: function(data){ layer.msg('基础档案编号不能重复', {time: 3000, icon:6});}
+                });
+            }else{
+            	 layer.msg('失败：信息未完善请重新填写！', {time: 3000, icon:6});
+            }
+        });
+      //修改验证
+        $("#updateForm").bootstrapValidator({
+            message: '输入值不合法',//好像从来没出现过
+            feedbackIcons: {//根据验证结果显示的各种图标
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+            	baseDocumentNo: {
+            		message: '基础档案编号不合法',
+                    validators: {
+                        notEmpty: {//检测非空,radio也可用
+                            message: '基础档案编号必须输入'
+                        },
+                        regexp: {//检测长度
+	                    	 regexp: /^[a-zA-Z]\w{5,17}$/,
+                            message: '所输入的字符不符要求'
+	                    }
+                    }
+                },
+            baseDocumentName: {
+	        		message: '基础档案名不合法',
+	                validators: {
+	                    notEmpty: {//检测非空,radio也可用
+	                        message: '基础档案名必须输入'
+	                    }
+	                }
+	            },
+	            scale: {
+        		message: '未选择分级',
+                validators: {
+                	regexp: {//检测长度
+                   	 regexp: /^[a-zA-Z]$/,
+                       message: '请选择是否分级'
+                   }
+                }
+            }
+            }
+        });
+        $("#updateRecord").click(function () {//非submit按钮点击后进行验证，如果是submit则无需此句直接验证
+        	$("#updateForm").data('bootstrapValidator').validate();//提交验证
+            if ($("#updateForm").data('bootstrapValidator').isValid()) {//获取验证结果，如果成功，执行下面代码
+            	 var data = $("#updateForm").serialize();
+                 $.ajax({
+                     url: "baseDocument/updateDocument.action",
+                     dataType: "json",
+                     type: "post",
+                     data: data,
+                     success: function (req){
+                         if (req) {
+                             $('#updateModal').modal('hide');
+                             $('#table').bootstrapTable('refresh');
+                         } else {
+                             alert("更新失败");
+                         }
+                     },
+                     error: function(data){ layer.msg('基础档案编号不能重复', {time: 3000, icon:6});}
+                 });
+            }else{
+            	 layer.msg('失败：信息未完善请重新填写！', {time: 3000, icon:6});
+            }
+        });
+        
+        $('#btn_add').on("click", function(){
+            $("#myModal").modal().on("show.bs.modal", function(){}).on('hidden.bs.modal', function(){
+            	
             });
         });
         
@@ -253,57 +393,8 @@
 	    		}; 
 			$('#table').bootstrapTable('refreshOptions', obj);
         });
-        
-        //添加数据
-        $("#addRecord").click(function(){
-        	console.log("123456");
-            var data = $("#addForm").serializeArray();
-            alert(data);
-            $.ajax({
-                url: "baseDocument/addDocument.action",
-                dataType:"json",
-                type: "post",
-                data: data,
-                success: function(data){
-                	console.log("123");
-                    if (data) {
-                        $('#addModal').modal('hide');
-                        $('#table').bootstrapTable('refresh');
-                        layer.msg('添加成功', {time: 3000, icon:6});
-                        
-                        $('#txt_baseDocumentNo')[0].value = ""; 
-                        $('#txt_baseDocumentName')[0].value = "";
-                        $('#txt_scale')[0].value = "";
-                        $('#txt_description')[0].value = "";
-                        return;
-                    }
-                        //捕获页
-                        layer.msg('添加失败', {time: 3000, icon:6});
-                },
-                error: function(data){console.log("我出错了");}
-            });
-        });
-
-        //更新数据
-        $("#updateRecord").click(function(){
-            var data = $("#updateForm").serialize();
-            $.ajax({
-                url: "baseDocument/updateDocument.action",
-                dataType: "json",
-                type: "post",
-                data: data,
-                success: function (req){
-                    if (req) {
-                        $('#updateModal').modal('hide');
-                        $('#table').bootstrapTable('refresh');
-                    } else {
-                        alert("更新失败");
-                    }
-                },
-                error: function(req){}
-            });
-        });
     });
+   
 
     
     //显示更新模态框
@@ -327,7 +418,6 @@
     //删除记录
     function dels(ids) {
         if(confirm("确定删除选中记录吗?")){
-        	console.log("我11111");
             if(undefined == ids){
                 ids = getIdSelections();
                 //捕获页
@@ -352,6 +442,10 @@
                 error : function(req) {console.log("我出错了"+req);}
             });
         }
+    }
+    //查找记录
+    function look(baseDocumentNo) {
+    	window.location.href="jsps/system/AssistantDocument.jsp?baseDocumentNo="+baseDocumentNo
     }
 </script>
 </body>

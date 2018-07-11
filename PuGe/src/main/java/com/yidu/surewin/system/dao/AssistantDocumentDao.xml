@@ -30,6 +30,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="baseDocumentNo != null and baseDocumentNo !=''">
 			and baseDocumentNo=#{baseDocumentNo}
 			</if>
+			<if test="a != null and a !=''">
+			and baseDocumentNo=#{a}
+			</if>
 			</where>
 			limit #{pageNumber} , #{pageSize}
 	</select>
@@ -45,6 +48,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			</if>
 			<if test="assistantDocumentName != null and assistantDocumentName !=''">
 			and assistantDocumentName like '%${assistantDocumentName}%'
+			</if>
+			<if test="a != null and a !=''">
+			and baseDocumentNo=#{a}
 			</if>
 			
 		</where>

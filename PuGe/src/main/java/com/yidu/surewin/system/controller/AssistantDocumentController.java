@@ -23,14 +23,15 @@ public class AssistantDocumentController {
 		
 	}
 	@ResponseBody
-	@RequestMapping(value="assistantDocumentpageQuery" ,method={RequestMethod.POST})
-	public Map<String, Object> doassistantDocumentController(String useable,String assistantDocumentName,String baseDocumentNo,Integer pageNumber,Integer pageSize){
+	@RequestMapping(value="assistantDocumentpageQuery" ,method={RequestMethod.POST, RequestMethod.GET})
+	public Map<String, Object> doassistantDocumentController(String useable,String a,String assistantDocumentName,String baseDocumentNo,Integer pageNumber,Integer pageSize){
 		Map<String, Object> queryMap= new HashMap<String, Object>();
 		queryMap.put("useable", useable);
 		queryMap.put("assistantDocumentName", assistantDocumentName);
 		queryMap.put("baseDocumentNo", baseDocumentNo);
 		queryMap.put("pageNumber", (pageNumber-1)*pageSize);
 		queryMap.put("pageSize", pageSize);
+		queryMap.put("a", a);
 		List<AssistantDocument> assistantDocuments=assistantDocumentService.AssistantDocumentpageQuery(queryMap);
 		System.out.println(assistantDocuments);
 		Map<String, Object> returnMap= new HashMap<String, Object>();
@@ -47,9 +48,10 @@ public class AssistantDocumentController {
 		return returnMap;
 	}	
 	@ResponseBody
-	@RequestMapping(value="assistantDocumentAdd" ,method={RequestMethod.POST})
+	@RequestMapping(value="assistantDocumentAdd" ,method={RequestMethod.POST,RequestMethod.GET})
 	 public boolean doInsert(AssistantDocument assistantDocument){
 		assistantDocument.setAssistantDocumentId(IDGenerator.getId());
+		assistantDocument.setUseable("Y");
 		String baseDocumentId = assistantDocumentService.findBaseDocumentBDId(assistantDocument.getBaseDocumentNo());
 		if(baseDocumentId != null){
 			assistantDocument.setBaseDocumentId(baseDocumentId);
@@ -64,7 +66,7 @@ public class AssistantDocumentController {
 		}
 	}
 	@ResponseBody
-	@RequestMapping(value="assistantDocumentdelete" ,method={RequestMethod.POST})
+	@RequestMapping(value="assistantDocumentdelete" ,method={RequestMethod.POST ,RequestMethod.GET})
 	 public boolean dodelete(String ids){
 		int rows=assistantDocumentService.deleteAassistantDocument(ids);
 		if(rows>0){
@@ -74,7 +76,7 @@ public class AssistantDocumentController {
 		}
 	}
 	@ResponseBody
-	@RequestMapping(value="assistantDocumentUpdate" ,method={RequestMethod.POST})
+	@RequestMapping(value="assistantDocumentUpdate" ,method={RequestMethod.POST,RequestMethod.GET})
 	 public boolean doUpdate(AssistantDocument assistantDocument){
 		int rows=assistantDocumentService.updateAassistantDocument(assistantDocument);
 		if(rows>0){

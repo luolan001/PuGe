@@ -21,6 +21,7 @@ public class BaseDocumentController {
 	private BaseDocumentService baseDocumentService;
 	
 	public BaseDocumentController(){	
+		System.out.println("½øÀ´ÁË");
 	}
 
 	@ResponseBody
@@ -54,6 +55,12 @@ public class BaseDocumentController {
 		}else {
 			return false;
 		}
+	}
+
+	@RequestMapping(value="lookAssistantDocument",method={RequestMethod.POST})
+	public String dolook(String ids){
+		System.out.println("lookAssistantDocument1231231");
+		return "redirect:../jsps/system/AssistantDocument.jsp?ids="+ids;
 	}
 	
 	@ResponseBody

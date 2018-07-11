@@ -10,12 +10,14 @@
     <link href="../../bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="../../bootstrap-3.3.7-dist/bootstrap-table/bootstrap-table.css" rel="stylesheet" type="text/css">
     <link href="../../layer-v3.1.1/layer/mobile/need/layer.css" rel="stylesheet" type="text/css">
+        <link href="../../bootstrap-3.3.7-dist/validator/bootstrap-validator_0.5.3_css_bootstrapValidator.css">
     
     <script src="../../bootstrap-3.3.7-dist/jquery_3.2.1/jquery.min.js"></script>
     <script src="../../bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
     <script src="../../bootstrap-3.3.7-dist/bootstrap-table/bootstrap-table.js"></script>
     <script src="../../bootstrap-3.3.7-dist/bootstrap-table/bootstrap-table-zh-CN.js"></script>
     <script src="../../layer-v3.1.1/layer/layer.js"></script>
+    	<script src="../../bootstrap-3.3.7-dist/validator/bootstrap-validator_0.5.3_js_bootstrapValidator.js"></script>
 
 	<base href="<%=basePath%>" />
 </head>
@@ -64,7 +66,7 @@
                     <div class="modal-body">
                         <form role="form" action="javascript:void(0)" id="addForm">
                         <div class="form-group">
-                            <label for="txt_assistantDocumentNo">辅助档案编号</label>
+                            <label for="txt_assistantDocumentNo">辅助档案编号(以档案名助记码+编号构成 如：LX000001)</label>
                             <input type="text" name="assistantDocumentNo" data-bind="value:assistantDocumentNo" class="form-control"
                                    id="txt_baseDocumentNo"
                                    placeholder="辅助档案编号">
@@ -82,16 +84,10 @@
                                    placeholder="基础档案编号">
                         </div>
                         <div class="form-group">
-                            <label for="txt_shortName">简称</label>
+                            <label for="txt_shortName">助记码</label>
                             <input type="text" name="shortName" data-bind="value:shortName" class="form-control"
                                    id="txt_shortName"
-                                   placeholder="简称">
-                        </div>
-                        <div class="form-group">
-                            <label for="txt_useable">是否可用</label>
-                            <input type="text" name="useable" data-bind="value:useable" class="form-control"
-                                   id="txt_useable"
-                                   placeholder="是否可用">
+                                   placeholder="助记码">
                         </div>
                         <div class="form-group">
                             <label for="txt_description">描述</label>
@@ -163,7 +159,14 @@
     </div>
 </div>
 <script type="text/javascript">
+function GetQueryString(name)
+{
+     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+     var r = window.location.search.substr(1).match(reg);
+     if(r!=null)return  unescape(r[2]); return null;
+}
     $(function(){
+    	var a = GetQueryString("baseDocumentNo");
     	var height = $(window).height();
         $('#table').bootstrapTable({
             url: "assistantDocument/assistantDocumentpageQuery.action",//这个接口需要处理bootstrap table传递的固定参数
@@ -194,7 +197,8 @@
             queryParams: function queryParams(params) {
                 var param = {
                     pageNumber: params.pageNumber,
-                    pageSize: params.pageSize
+                    pageSize: params.pageSize,
+                    a:a
                 };
                 return param;
             },
@@ -215,7 +219,7 @@
                 align: "center",
             }, {
                 field: 'shortName',
-                title: '简称',
+                title: '助记码',
                 align: "center",
             }, {
                 field: 'useable',
@@ -241,25 +245,110 @@
                     var edit =
                         '<button type="button" style="margin-right: 8px;" class="btn btn-info" onclick="javascript:showUpdateModal(\'' +
                         row.assistantDocumentId + '\',\'' + row.assistantDocumentNo + '\',\'' + row.assistantDocumentName + '\',\'' + row.baseDocumentId +
-                        '\',\'' +row.baseDocumentNo +'\',\'' +row.shortName+'\',\'' +row.useable+'\',\'' +row.description+
+                        '\',\'' +row.baseDocumentNo +'\',\'' +row.shortName+'\',\'' +row.description+
                         '\')"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>更新</button>';
                     var del = '<button type="button" style="margin-right: 8px;" class="btn btn-danger" onclick="javascript:dels(\'' +
                         row.assistantDocumentId +
                         '\')"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除</button>';
-                    var look= '<button type="button" style="margin-right: 8px;" class="btn btn-success" onclick="javascript:look(\'' +
+                    var disable= '<button type="button" style="margin-right: 8px;" class="btn btn-warning" onclick="javascript:disable(\'' +
                     row.assistantDocumentId +
-                    '\')"><span class="glyphicon glyphicon-search" aria-hidden="true"></span>查看</button>';
-                    return edit + del + look;
+                    '\')"><span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>禁用</button>';
+                    return edit + del + disable;
                 },
                 align: "center"
             }],
             paginationPreText: "上一页",
             paginationNextText: "下一页",
         });
+        
+		//添加验证
+        $("#addForm").bootstrapValidator({
+            message: '输入值不合法',//好像从来没出现过
+            feedbackIcons: {//根据验证结果显示的各种图标
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+            	baseDocumentNo: {
+            		message: '基础档案编号不合法',
+                    validators: {
+                        notEmpty: {//检测非空,radio也可用
+                            message: '基础档案编号必须输入'
+                        },
+                        regexp: {//检测长度
+	                    	 regexp: /^[a-zA-Z]\w{5,17}$/,
+                            message: '所输入的字符不符要求'
+	                    }
+                    }
+                },
+                assistantDocumentNo: {
+            		message: '辅助档案编号不合法',
+                    validators: {
+                        notEmpty: {//检测非空,radio也可用
+                            message: '辅助档案编号必须输入'
+                        },
+                        regexp: {//检测长度
+	                    	 regexp: /^[a-zA-Z]\w{5,17}$/,
+                            message: '所输入的字符不符要求'
+	                    }
+                    }
+                },
+                assistantDocumentName: {
+	        		message: '辅助档案名不合法',
+	                validators: {
+	                    notEmpty: {//检测非空,radio也可用
+	                        message: '辅助档案名必须输入'
+	                    }
+	                }
+	            },
+	            shortName: {
+        		message: '助记码不合法',
+                validators: {
+                	regexp: {//检测长度
+                   	 regexp: /^[A-Za-z]+$/,
+                       message: '助记码全由字母组成'
+                   }
+                }
+            }
+            }
+        });
+        $("#addRecord").click(function () {//非submit按钮点击后进行验证，如果是submit则无需此句直接验证
+        	$("#addForm").data('bootstrapValidator').validate();//提交验证
+            if ($("#addForm").data('bootstrapValidator').isValid()) {//获取验证结果，如果成功，执行下面代码
+            	 var data = $("#addForm").serializeArray();
+                 $.ajax({
+                     url: "assistantDocument/assistantDocumentAdd.action",
+                     dataType:"json",
+                     type: "post",
+                     data: data,
+                     success: function(req){
+                     	if (req == false) {
+                             $('#addModal').modal('hide');
+                             $('#addForm')[0].reset();
+                             layer.msg('您添加的基础档案编号未找到', {time: 3000, icon:6});
+                             return;
+                         }
+                         if (req) {
+                             $('#addModal').modal('hide');
+                             $('#table').bootstrapTable('refresh');
+                             $('#addForm')[0].reset();
+                             layer.msg('添加成功', {time: 3000, icon:6});
+                             return;
+                         }
+                             //捕获页
+                             layer.msg('添加失败', {time: 3000, icon:6});
+                     },
+                    error: function(data){ layer.msg('有唯一字段重复了！', {time: 3000, icon:6});}
+                });
+            }else{
+            	 layer.msg('失败：信息未完善请重新填写！', {time: 3000, icon:6});
+            }
+        });
 
-        $('#btn_add').on("click", function () {
-            $("#myModal").modal().on("shown.bs.modal", function () {
-            }).on('hidden.bs.modal', function () {
+        $('#btn_add').on("click", function(){
+            $("#myModal").modal().on("show.bs.modal", function(){}).on('hidden.bs.modal', function(){
+            	
             });
         });
         
@@ -281,35 +370,6 @@
 			$('#table').bootstrapTable('refreshOptions', obj);
         });
         
-        //添加数据
-        $("#addRecord").click(function(){
-            var data = $("#addForm").serializeArray();
-            $.ajax({
-                url: "assistantDocument/assistantDocumentAdd.action",
-                dataType:"json",
-                type: "post",
-                data: data,
-                success: function(req){
-                	if (req == false) {
-                        $('#addModal').modal('hide');
-                        $('#addForm')[0].reset();
-                        layer.msg('您添加的基础档案编号未找到', {time: 3000, icon:6});
-                        return;
-                    }
-                    if (req) {
-                        $('#addModal').modal('hide');
-                        $('#table').bootstrapTable('refresh');
-                        $('#addForm')[0].reset();
-                        layer.msg('添加成功', {time: 3000, icon:6});
-                        return;
-                    }
-                        //捕获页
-                        layer.msg('添加失败', {time: 3000, icon:6});
-                },
-                error: function(data){console.log("我出错了");}
-            });
-        });
-
         //更新数据
         $("#updateRecord").click(function(){
             var data = $("#updateForm").serialize();
