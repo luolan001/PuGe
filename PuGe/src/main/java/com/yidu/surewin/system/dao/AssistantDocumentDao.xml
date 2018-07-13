@@ -30,8 +30,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="baseDocumentNo != null and baseDocumentNo !=''">
 			and baseDocumentNo=#{baseDocumentNo}
 			</if>
-			<if test="a != null and a !=''">
-			and baseDocumentNo=#{a}
+			<if test="baseNo != null and baseNo !=''">
+			and baseDocumentNo=#{baseNo}
 			</if>
 			</where>
 			limit #{pageNumber} , #{pageSize}
@@ -49,8 +49,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="assistantDocumentName != null and assistantDocumentName !=''">
 			and assistantDocumentName like '%${assistantDocumentName}%'
 			</if>
-			<if test="a != null and a !=''">
-			and baseDocumentNo=#{a}
+			<if test="baseNo != null and baseNo !=''">
+			and baseDocumentNo=#{baseNo}
 			</if>
 			
 		</where>
@@ -74,6 +74,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<update id="updateAassistantDocument" parameterType="String">
 		update t_assistant_document set assistantDocumentNo=#{assistantDocumentNo}
 		 , assistantDocumentName=#{assistantDocumentName} , baseDocumentId=#{baseDocumentId} , baseDocumentNo=#{baseDocumentNo} 
-		,shortName=#{shortName} ,useable=#{useable} ,description=#{description} where assistantDocumentId=#{assistantDocumentId}
+		,shortName=#{shortName},description=#{description} where assistantDocumentId=#{assistantDocumentId}
 	</update>
 </mapper>

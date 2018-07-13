@@ -24,14 +24,16 @@ public class AssistantDocumentController {
 	}
 	@ResponseBody
 	@RequestMapping(value="assistantDocumentpageQuery" ,method={RequestMethod.POST, RequestMethod.GET})
-	public Map<String, Object> doassistantDocumentController(String useable,String a,String assistantDocumentName,String baseDocumentNo,Integer pageNumber,Integer pageSize){
+	public Map<String, Object> doassistantDocumentController(String useable,String baseNo,String assistantDocumentName,String baseDocumentNo,Integer pageNumber,Integer pageSize){
 		Map<String, Object> queryMap= new HashMap<String, Object>();
 		queryMap.put("useable", useable);
 		queryMap.put("assistantDocumentName", assistantDocumentName);
 		queryMap.put("baseDocumentNo", baseDocumentNo);
+		System.out.println(pageNumber+"=---"+pageSize);
 		queryMap.put("pageNumber", (pageNumber-1)*pageSize);
+		
 		queryMap.put("pageSize", pageSize);
-		queryMap.put("a", a);
+		queryMap.put("baseNo", baseNo);
 		List<AssistantDocument> assistantDocuments=assistantDocumentService.AssistantDocumentpageQuery(queryMap);
 		System.out.println(assistantDocuments);
 		Map<String, Object> returnMap= new HashMap<String, Object>();
