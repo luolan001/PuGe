@@ -59,4 +59,14 @@ public class AssistantDocumentServiceImpl implements AssistantDocumentService{
 	public int updateAassistantDocument(AssistantDocument assistantDocument) {
 		return assistantDocumentDao.updateAassistantDocument(assistantDocument);
 	}
+
+	@Override
+	public int updateDisable(String assId) {
+		return assistantDocumentDao.updateDisable(assId);
+	}
+
+	@Override
+	public int updateUseable(String useassId) {
+		return assistantDocumentDao.updateUseable(useassId);
+	}
 }

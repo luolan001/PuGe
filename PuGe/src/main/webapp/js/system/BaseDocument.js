@@ -4,7 +4,7 @@
         $('#table').bootstrapTable({
             url: "baseDocument/baseDocumentpageQuery.action",//这个接口需要处理bootstrap table传递的固定参数
             method: 'post',
-            toolbar: '#toolbar',    //工具按钮用哪个容器
+            //toolbar: '#toolbar',    //工具按钮用哪个容器
             striped: true,      //是否显示行间隔色
             cache: false,      //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
             pagination: true,     //是否显示分页
@@ -18,7 +18,7 @@
             sidePagination: "server",   //分页方式：client客户端分页，server服务端分页
             clickToSelect: true,    //是否启用点击选中行
             buttonsAlign:"right",  //按钮位置
-            height: document.body.clientHeight - 300, //自定义表格的高度
+            height: document.body.clientHeight - 399, //自定义表格的高度
             width: document.body.clientWidth,
             sortName : "baseDocumentId",
             locale: 'zh-CN',//中文支持,
@@ -103,7 +103,7 @@
             sidePagination: "server",   //分页方式：client客户端分页，server服务端分页
             clickToSelect: true,    //是否启用点击选中行
             buttonsAlign:"right",  //按钮位置
-            height: document.body.clientHeight - 300, //自定义表格的高度
+            height: document.body.clientHeight - 379, //自定义表格的高度
             width: document.body.clientWidth,
             sortName : "assistantDocumentId",
             locale: 'zh-CN',//中文支持,
@@ -167,7 +167,10 @@
                     var disable= '<button type="button" style="margin-right: 8px;" class="btn btn-warning btn-xs" onclick="javascript:disable(\'' +
                     row.assistantDocumentId +
                     '\')"><span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>禁用</button>';
-                    return edit + deles + disable;
+                    var useable= '<button type="button" style="margin-right: 8px;" class="btn btn-success btn-xs" onclick="javascript:useable(\'' +
+                    row.assistantDocumentId +
+                    '\')"><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>启用</button>';
+                    return edit + deles + disable +useable;
                 },
                 align: "center"
             }],
@@ -572,6 +575,40 @@
    }
     //辅助档案表禁用
     function disable(assId){
-    	
+    	 $.ajax({
+       			url:"assistantDocument/assistantDocumentUpdateDisable.action?assId="+assId,
+       			type:"post",
+       			traditional: true, //traditional 为true阻止深度序列化
+       			dataType : "json",
+       			success : function(req) {
+                    if (req) {
+                        $('#tableTwo').bootstrapTable('refresh');
+                        layer.msg('禁用成功', {time: 3000, icon:6});
+                        return;
+                    }
+                    layer.msg('禁用失败', {time: 3000, icon:6});
+
+                },
+                error : function(req) {console.log("我出错了"+req);}
+    	 });	
+    }
+    //辅助档案表启用
+    function useable(useassId){
+    	 $.ajax({
+    			url:"assistantDocument/assistantDocumentUpdateUseable.action?useassId="+useassId,
+    			type:"post",
+    			traditional: true, //traditional 为true阻止深度序列化
+    			dataType : "json",
+    			success : function(req) {
+                 if (req) {
+                     $('#tableTwo').bootstrapTable('refresh');
+                     layer.msg('禁用成功', {time: 3000, icon:6});
+                     return;
+                 }
+                 layer.msg('禁用失败', {time: 3000, icon:6});
+
+             },
+             error : function(req) {console.log("我出错了"+req);}
+ 	 });	
     }
    

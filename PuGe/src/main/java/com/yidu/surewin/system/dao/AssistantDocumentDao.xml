@@ -76,4 +76,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		 , assistantDocumentName=#{assistantDocumentName} , baseDocumentId=#{baseDocumentId} , baseDocumentNo=#{baseDocumentNo} 
 		,shortName=#{shortName},description=#{description} where assistantDocumentId=#{assistantDocumentId}
 	</update>
+	<!-- 禁用 -->
+	<update id="updateDisable" parameterType="String">
+		update t_assistant_document set  useable='N' where assistantDocumentId=#{assId}
+	</update>
+	<!-- 启用 -->
+	<update id="updateUseable" parameterType="String">
+		update t_assistant_document set  useable='Y' where assistantDocumentId=#{useassId}
+	</update>
 </mapper>

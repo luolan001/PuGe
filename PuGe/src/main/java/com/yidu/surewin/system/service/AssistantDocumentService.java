@@ -12,4 +12,6 @@ public interface AssistantDocumentService {
 	 int addAssistantDocument(AssistantDocument assistantDocument);
 	 int deleteAassistantDocument(String assistantDocumentId);
 	 int updateAassistantDocument(AssistantDocument assistantDocument);
+	 int updateDisable(String assId);
+	 int updateUseable(String useassId);
 }

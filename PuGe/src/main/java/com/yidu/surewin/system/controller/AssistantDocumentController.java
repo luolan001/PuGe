@@ -87,4 +87,26 @@ public class AssistantDocumentController {
 			return false;
 		}
 	}
+	@ResponseBody
+	@RequestMapping(value="assistantDocumentUpdateDisable" ,method={RequestMethod.POST,RequestMethod.GET})
+	 public boolean doUpdateDisable(String assId){
+		System.out.println(assId);
+		int rows=assistantDocumentService.updateDisable(assId);
+		if(rows>0){
+			return true;
+		}else {
+			return false;
+		}
+	}
+	@ResponseBody
+	@RequestMapping(value="assistantDocumentUpdateUseable" ,method={RequestMethod.POST,RequestMethod.GET})
+	 public boolean doUpdateUseable(String useassId){
+		System.out.println(useassId);
+		int rows=assistantDocumentService.updateUseable(useassId);
+		if(rows>0){
+			return true;
+		}else {
+			return false;
+		}
+	}
 }

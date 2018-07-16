@@ -23,12 +23,11 @@
 	<base href="<%=basePath%>" />
 </head>
 <body>
-<div id="table_BaseDocument">
-    <div class="layer_notice"></div>
+<div id="table_BaseDocument" class="panel panel-info">
+<div class="panel-heading">基础档案表</div>
 <div class="col-*-12">
     
     <%--组合查询--%>
-        <div id="toolbar">
             <div id="toolbar_a" class="search" style="padding-top: 20px;padding-left: 10px;">
 	            <form class="form-inline">
 				  <div class="form-group">
@@ -48,7 +47,6 @@
 				  <button type="button" class="btn btn-primary glyphicon glyphicon-pencil" id="btn_add">添加记录</button>
 				</form>
     		</div>
-        </div>
         
         <%--表格--%>
         <table id="table"></table>
@@ -151,12 +149,11 @@
         </div>
     </div>
 </div>
-<div id="table_AssistantDocument">
-	    <div class="layer_notice"></div>
+<div id="table_AssistantDocument" class="panel panel-danger">
+<div class="panel-heading">辅助档案表</div>
 <div class="col-*-12">
     
     <%--组合查询--%>
-        <div id="toolbartwo">
             <div id="toolbar_a" class="search" style="padding-top: 20px;padding-left: 10px;">
 	            <form class="form-inline">
 				  <div class="form-group">
@@ -179,7 +176,6 @@
 				  <button type="button" class="btn btn-primary glyphicon glyphicon-pencil" id="btn_addTwo">添加记录</button>
 				</form>
     		</div>
-        </div>
         
         <%--表格--%>
         <table id="tableTwo"></table>
