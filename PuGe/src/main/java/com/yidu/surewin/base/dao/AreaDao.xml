@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yidu.surewin.base.dao.AreaDao">
+	<select id="findAllArea" resultType="Area">
+		select * from t_area
+	</select>
+	<insert id="addArea" parameterType="Area">
+		insert into t_area values(#{areaId},#{province},#{city},#{county},#{postCode},#{simpleCode},#{cityCode},
+		'','','','','','','','','','','','','',1,'','','')
+	</insert>
+	<update id="updateArea" parameterType="Area">
+		update t_area set province=#{province,jdbcType=VARCHAR},
+		city=#{city},county=#{county},postCode=#{postCode},
+		simpleCode=#{simpleCode},cityCode=#{cityCode}
+		where areaId=#{areaId}
+	</update>
+	<select id="areapageQuery" parameterType="map" resultType="Area">
+		select * from t_area
+		<where>
+			<if test="province !=null and province !=''">
+				province like '%${province}%'
+			</if>
+			<if test="city !=null and city !=''">
+				and city like '%${city}%'
+			</if>
+			<if test="county !=null and county !=''">
+				and county like '%${county}%'
+			</if>
+		</where>
+		limit #{pageNumber},#{pageSize}
+	</select>
+	<select id="findPageQueryCount" parameterType="map" resultType="int">
+		select count(*) from t_area
+		<where>
+			<if test="province !=null and province !=''">
+				province like '%${province}%'
+			</if>
+			<if test="city !=null and city !=''">
+				and city like '%${city}%'
+			</if>
+			<if test="county !=null and county !=''">
+				and	county like '%${county}%'
+			</if>
+		</where>
+	</select>
+	<update id="updatedisable" parameterType="String" >
+		update t_area set useable='N' where areaId=#{ids}
+	</update> 
+	<update id="updateuseable" parameterType="String" >
+		update t_area set useable='Y' where areaId=#{areaId}
+	</update> 
+</mapper>

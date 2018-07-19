@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yidu.surewin.base.dao.PickStandardDao">
+	<!-- 添加取派标准表内容 -->
+	<insert id="addPickStandard" parameterType="PickStandard" >
+	 	insert into t_pick_standard values(#{pickStandardId},#{pickStandardName},#{minWeight},#{maxWeight},#{useable},#{description})
+	</insert>
+	<!-- 删除取派标准表内容 -->
+	<delete id="deletePickStandard" parameterType="String">
+		delete from t_pick_standard where pickStandardId=#{pickStandardId}
+	</delete>
+	<!-- 修改取派标准表内容 -->
+	<update id="updatePickStandard" parameterType="PickStandard">
+		update t_pick_standard set pickStandardId=#{pickStandardId},
+		pickStandardName=#{pickStandardName},minWeight=#{minWeight},maxWeight=#{maxWeight},useable=#{useable},description=#{description} where pickStandardId=#{pickStandardId}
+	</update>
+	<!-- 查询所有取派标准表-->
+	<select id="findAll" resultType="PickStandard">
+		select * from t_pick_standard 
+	</select> 
+	<!-- 组合分页 -->
+	<select id="pickStandardpageQuery" parameterType="map" resultType="PickStandard"> 
+		select * 
+		from t_pick_standard 
+		<where> 
+			<if test="useable != null and useable !=''">
+				useable=#{useable}
+			</if>
+			<if test="pickStandardName != null and pickStandardName !=''">
+				and pickStandardName like '%${pickStandardName}%'
+			</if>
+			<if test="minWeight != null and minWeight !=''">
+     			and minWeight >= #{minWeight}
+ 			</if>
+			<if test="maxWeight != null and maxWeight !=''">
+     			and maxWeight &lt;= #{maxWeight}
+ 			</if>
+		</where>
+		limit #{pageNumber},#{pageSize}
+	</select>
+	<!-- 查询记录总数 -->
+	<select id="findAllPickStandardCount" resultType="int">
+		select count(*) from t_pick_standard
+	</select>
+	<select id="findPageQueryCount" parameterType="map" resultType="int">
+		select count(*) from t_pick_standard 
+		<where> 
+			<if test="useable != null and useable !=''">
+				useable = #{useable}
+			</if>
+			<if test="pickStandardName != null and pickStanyName !=''">
+				and pickStandardName like '%${pickStandardName}%'
+			</if>
+			 <if test="minWeight != null and minWeight !=''">
+     			and minWeight >= #{minWeight}
+ 			</if>
+			<if test="maxWeight != null and maxWeight !=''">
+     			and maxWeight &lt;= #{maxWeight}
+ 			</if>
+		</where>
+	</select>
+</mapper>

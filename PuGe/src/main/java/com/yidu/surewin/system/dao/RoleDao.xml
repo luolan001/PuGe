@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yidu.surewin.system.dao.RoleDao">
+	<!-- 添加基础档案表内容 -->
+	<insert id="addRoleTx" parameterType="Role" >
+	 	insert into t_role(roleId,roleName,keyword,organizationTypeId,organizationTypeName,description)
+	 	values (#{roleId},#{roleName},#{keyword},#{organizationTypeId},#{organizationTypeName},#{description})
+	</insert>
+	<!-- 删除基础档案表内容 -->
+	<delete id="deleteRoleTx" parameterType="String">
+		delete from t_role where roleId=#{roleId}
+	</delete>
+	<!-- 修改基础档案表内容 -->
+	<update id="updateRoleTx" parameterType="Role">
+		update t_role 
+		set roleName = #{roleName}, keyword = #{keyword},
+			organizationTypeId = #{organizationTypeId}, organizationTypeName = #{organizationTypeName},
+			description = #{description}
+		where roleId=#{roleId}
+	</update>
+	<!-- 组合分页 -->
+	<select id="RolePageQuery" parameterType="map" resultType="Role"> 
+		select * 
+		from t_role
+		<where> 
+			<if test="roleName != null and roleName !=''">
+				roleName = #{roleName}
+			</if>
+			<if test="organizationTypeName != null and organizationTypeName !=''">
+				and organizationTypeName like '%${organizationTypeName}%'
+			</if>
+		</where>
+		limit #{pageNumber},#{pageSize}
+	</select>
+	
+	<select id="findRoleQueryCount" parameterType="map" resultType="int">
+		select count(*) from t_role 
+		<where> 
+			<if test="roleName != null and roleName !=''">
+				roleName = #{roleName}
+			</if>
+			<if test="organizationTypeName != null and organizationTypeName !=''">
+				and organizationTypeName like '%${organizationTypeName}%'
+			</if>
+		</where>
+	</select>
+</mapper>

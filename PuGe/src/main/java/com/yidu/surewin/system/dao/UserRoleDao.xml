@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yidu.surewin.system.dao.UserRoleDao">
+	<!-- 添加基础档案表内容 -->
+	<insert id="addUserRoleTx" parameterType="UserRole" >
+	 	insert into t_user_role(userRoleId,userId,roleId,description)
+	 	values (#{userRoleId},#{userId},#{roleId},#{description})
+	</insert>
+	<!-- 删除基础档案表内容 -->
+	<delete id="deleteUserRoleTx" parameterType="String">
+		delete from t_user_role where userRoleId = #{userRoleId}
+	</delete>
+	<!-- 修改基础档案表内容 -->
+	<update id="updateUserRoleTx" parameterType="UserRole">
+		update t_user_role
+		set userId = #{userId}, roleId = #{roleId}, description = #{description}
+		where userRoleId = #{userRoleId}
+	</update>
+	<!-- 组合分页 -->
+	<select id="userRolePageQuery" parameterType="map" resultType="UserRole"> 
+		select * 
+		from t_user_role
+		<where> 
+			<if test="userId != null and userId !=''">
+				userId = #{userId}
+			</if>
+			<if test="roleId != null and roleId !=''">
+				and roleId = #{roleId}
+			</if>
+		</where>
+		limit #{pageNumber},#{pageSize}
+	</select>
+	
+	<select id="findUserRoleQueryCount" parameterType="map" resultType="int">
+		select count(*) from t_user_role
+		<where> 
+			<if test="userId != null and userId !=''">
+				userId = #{userId}
+			</if>
+			<if test="roleId != null and roleId !=''">
+				and roleId = #{roleId}
+			</if>
+		</where>
+	</select>
+</mapper>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yidu.surewin.base.dao.AssistantDocumentDao">
+<!-- 	<resultMap id="DocumentMap" type="AssistantDocument">
+		<id  column="assistantDocumentId" property="assistantDocumentId"/>
+		<result column="assistantDocumentNo" property="assistantDocumentNo"/>
+		<result column="assistantDocumentName" property="assistantDocumentName"/>
+		<result column="baseDocumentId" property="baseDocumentId"/>
+		<result column="baseDocumentNo" property="baseDocumentNo"/>
+		<result column="shortName" property="shortName"/>
+		<result column="useable" property="useable"/>
+		<result column="description" property="description"/>
+		<association property="baseDocument" javaType="BaseDocument">
+            <id column="baseDocumentId" property="baseDocumentId"></id>
+            <result column="baseDocumentNo" property="baseDocumentNo" />
+        </association>
+	</resultMap> -->
+	<!-- 分页组合查询 -->
+	<select id="AssistantDocumentpageQuery" parameterType="map" resultType="AssistantDocument">
+		select * from t_assistant_document
+		<where>
+			<if test="useable != null and useable !=''">
+			useable=#{useable}
+			</if>
+			<if test="assistantDocumentName != null and assistantDocumentName !=''">
+			and assistantDocumentName like '%${assistantDocumentName}%'
+			</if>
+			<if test="baseDocumentNo != null and baseDocumentNo !=''">
+			and baseDocumentNo=#{baseDocumentNo}
+			</if>
+			<if test="baseNo != null and baseNo !=''">
+			and baseDocumentNo=#{baseNo}
+			</if>
+			</where>
+			limit #{pageNumber} , #{pageSize}
+	</select>
+	<!-- 条件总数查询 -->
+	<select id="findPageQueryCount" parameterType="map" resultType="int">
+		select count(*) from t_assistant_document
+		<where>
+			<if test="useable != null and useable !=''">
+			useable=#{useable}
+			</if>
+			<if test="baseDocumentNo != null and baseDocumentNo !=''">
+			and baseDocumentNo=#{baseDocumentNo}
+			</if>
+			<if test="assistantDocumentName != null and assistantDocumentName !=''">
+			and assistantDocumentName like '%${assistantDocumentName}%'
+			</if>
+			<if test="baseNo != null and baseNo !=''">
+			and baseDocumentNo=#{baseNo}
+			</if>
+			
+		</where>
+	</select>
+	
+	<!-- 查询基础档案表ID -->
+	<select id="findBaseDocumentBDId" parameterType="String" resultType="String">
+		select baseDocumentId from t_base_document where baseDocumentNo = #{baseDocumentNo}
+	</select>	
+	
+	<insert id="addAssistantDocument" parameterType="AssistantDocument">
+		insert into 
+		t_assistant_document(assistantDocumentId,assistantDocumentNo,assistantDocumentName,baseDocumentId,baseDocumentNo,shortName,useable,description) 
+		values(#{assistantDocumentId},#{assistantDocumentNo},#{assistantDocumentName},#{baseDocumentId},#{baseDocumentNo},#{shortName},#{useable},#{description})
+	</insert>
+	<!-- 删除辅助案表 -->
+	<delete id="deleteAassistantDocument" parameterType="String"> 
+		delete from t_assistant_document where assistantDocumentId=#{assistantDocumentId}
+	</delete>
+	<!-- 修改辅助案表 -->
+	<update id="updateAassistantDocument" parameterType="String">
+		update t_assistant_document set assistantDocumentNo=#{assistantDocumentNo}
+		 , assistantDocumentName=#{assistantDocumentName} , baseDocumentId=#{baseDocumentId} , baseDocumentNo=#{baseDocumentNo} 
+		,shortName=#{shortName},description=#{description} where assistantDocumentId=#{assistantDocumentId}
+	</update>
+	<!-- 禁用 -->
+	<update id="updateDisable" parameterType="String">
+		update t_assistant_document set  useable='N' where assistantDocumentId=#{assId}
+	</update>
+	<!-- 启用 -->
+	<update id="updateUseable" parameterType="String">
+		update t_assistant_document set  useable='Y' where assistantDocumentId=#{useassId}
+	</update>
+</mapper>

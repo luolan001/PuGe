@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yidu.surewin.system.dao.ResourceDao">
+	
+	<!-- 根据资源名查询资源ID -->
+	<select id="findResourceId" parameterType="String" resultType="String">
+		select resourceId from t_resource where resourceName = #{resourceName}
+	</select>
+	
+	<!-- 查询资源表所有数据，有条件则进行条件判断 -->
+	<select id="findAll" parameterType="Map" resultType="Resource">
+		<!-- 查询语句 -->
+		select * from t_resource
+		<!-- 条件 -->
+		<where> 
+			<!-- 资源名 -->
+			<if test="resourceName != null and resourceName !=''">
+				 resourceName = #{resourceName} 
+			</if>
+			<!-- 或，父ID2 -->
+			<if test="parentId2 != null and parentId2 !=''">
+				 or parentId = #{parentId2}
+			</if>
+			<!-- 并且，父ID -->
+			<if test="parentId != null and parentId !=''">
+				 and parentId = #{parentId}
+			</if>
+			<!-- 并且，索引 -->
+			<if test="indexs != null and indexs !=''">
+				 and indexs = #{indexs}
+			</if>
+			<!-- 并且，资源级别 -->
+			<if test="resourceType != null and resourceType !=''">
+				 and resourceType = #{resourceType}
+			</if>
+		</where>
+	</select>
+	
+	
+	<!-- 开始 -->
+	<select id="findQueryResource" resultType="Resource">
+		select * from t_resource 
+	</select>
+	
+	<select id="findRoleResourceWithRoleId" parameterType="String" resultType="Resource">
+		select * from t_resource where resourceId in (select resourceId from t_role_resource where roleId = #{roleId})
+	</select>
+	<!-- 结束 -->
+	
+	<update id="deleteUseableTx"  parameterType="String">
+		update t_resource set useable = 'N' where resourceId = #{resourceId}
+	</update>
+	
+	<update id="enableUseableTx"  parameterType="String">
+		update t_resource set useable = 'Y' where resourceId = #{resourceId}
+	</update>
+	
+	<update id="updateParentIdTx" parameterType="Resource">
+		update t_resource 
+		set resourceName = #{resourceName}, 
+			keyword = #{keyword}, 
+			parentId = #{parentId},
+			parentName = #{parentName},
+			resourceUrl = #{resourceUrl},
+			description = #{description},
+			indexs = #{indexs}			
+		where resourceId = #{resourceId}
+	</update>
+	
+</mapper>

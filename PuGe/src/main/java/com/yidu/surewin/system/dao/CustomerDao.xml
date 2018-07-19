@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.yidu.surewin.system.dao.CustomerDao">
+		<!-- 添加客户表内容 -->
+		<insert id="addCustomer" parameterType="Customer">
+			insert into t_customer
+			values(#{customerId},#{customerNo},#{connectMan},#{connectPhone},#{connectAddress},#{customerName},#{phoneNumber},#{address},#{useable},#{description},' ',' ')
+		</insert>
+		<!-- 删除客户表内容 -->
+		<delete id="deleteCustomer" parameterType="String">
+			delete from t_customer where customerId=#{customerId}
+		</delete>
+		<!-- 修改客户表内容 -->
+		<update id="updateCustomer" parameterType="Customer">
+			update t_customer set customerNo=#{customerNo},connectMan=#{connectMan},
+			connectPhone=#{connectPhone},connectAddress=#{connectAddress},
+			customerName=#{customerName},phoneNumber=#{phoneNumber},
+			address=#{address},useable=#{useable},description=#{description} where customerId=#{customerId}
+		</update> 
+		<!-- 查询所有客户表 -->
+		<select id="findAll" resultType="Customer">
+			select * from t_customer
+		</select>
+		<!-- 组合分页 -->
+		<select id="customerpageQuery" parameterType="map" resultType="Customer">
+			select * 
+			from t_customer
+			<where>
+				<if test="useable != null and useable !=''">
+					useable like '%${useable}%'
+				</if>
+				<if test="customerName != null and customerName !=''">
+					and customerName like '%${customerName}%'
+				</if>
+			</where>
+			limit  #{pageNumber},#{pageSize}
+		</select>
+		<!-- 查询记录总数 -->
+		<select id="findAllCustomerCount"  resultType="int">
+			select count(*) from t_customer
+		</select>
+		<select id="findPageQueryCount"  parameterType="map" resultType="int">
+			select count(*) from t_customer
+			<where>
+				<if test="useable != null and useable !=''" >
+					useable like '%${useable}%'
+				</if>
+				<if test="customerName != null and customerName !=''">
+					and customerName like '%${customerName}%'
+				</if>
+			</where>
+		</select>
+</mapper>

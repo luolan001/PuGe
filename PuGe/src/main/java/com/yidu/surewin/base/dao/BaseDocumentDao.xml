@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yidu.surewin.base.dao.BaseDocumentDao">
+	<!-- 添加基础档案表内容 -->
+	<insert id="addBaseDocument" parameterType="BaseDocument" >
+	 	insert into t_base_document values(#{baseDocumentId},#{baseDocumentNo},#{baseDocumentName},#{scale},#{description},'','')
+	</insert>
+	<!-- 删除基础档案表内容 -->
+	<delete id="deleteBaseDocument" parameterType="String">
+		delete from t_base_document where baseDocumentId=#{baseDocumentId}
+	</delete>
+	<!-- 修改基础档案表内容 -->
+	<update id="updateBaseDocument" parameterType="BaseDocument">
+		update t_base_document set baseDocumentNo=#{baseDocumentNo},
+		baseDocumentName=#{baseDocumentName},scale=#{scale},description=#{description},remark1=''
+		,remark2='' where baseDocumentId=#{baseDocumentId}
+	</update>
+	<!-- 查询所有基础档案表-->
+	<select id="findAll" resultType="BaseDocument">
+		select * from t_base_document 
+	</select> 
+	<!-- 组合分页 -->
+	<select id="baseDocumentpageQuery" parameterType="map" resultType="BaseDocument"> 
+		select * 
+		from t_base_document 
+		<where> 
+			<if test="scale != null and scale !=''">
+				scale=#{scale}
+			</if>
+			<if test="baseDocumentName != null and baseDocumentName !=''">
+				and baseDocumentName like '%${baseDocumentName}%'
+			</if>
+		</where>
+		limit #{pageNumber},#{pageSize}
+	</select>
+	<!-- 查询记录总数 -->
+	<select id="findAllBaseDocumentCount" resultType="int">
+		select count(*) from t_base_document
+	</select>
+	<select id="findPageQueryCount" parameterType="map" resultType="int">
+		select count(*) from t_base_document 
+		<where> 
+			<if test="scale != null and scale !=''">
+				scale = #{scale}
+			</if>
+			<if test="baseDocumentName != null and baseDocumentName !=''">
+				and baseDocumentName like '%${baseDocumentName}%'
+			</if>
+		</where>
+	</select>
+</mapper>

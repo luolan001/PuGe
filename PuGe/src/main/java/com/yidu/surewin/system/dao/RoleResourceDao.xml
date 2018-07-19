@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yidu.surewin.system.dao.RoleResourceDao">
+	<!-- 添加基础档案表内容 -->
+	<!-- <insert id="addRoleResourceTx" parameterType="RoleResource" >
+	 	insert into t_role_resource(roleResourceId,resourceId,roleId,description)
+	 	values (#{roleResourceId},#{resourceId},#{roleId},#{description})
+	</insert> -->
+	<!-- 删除基础档案表内容 -->
+	<delete id="deleteRoleResourceTx" parameterType="String">
+		delete from t_role_resource where roleResourceId = #{roleResourceId}
+	</delete>
+	
+	<delete id="deleteRoleResourceWithRoleIdTx" parameterType="String">
+		delete from t_role_resource where roleId = #{roleId}
+	</delete>
+	
+	<!-- 修改基础档案表内容 -->
+	<update id="updateRoleResourceTx" parameterType="RoleResource">
+		update t_role_resource 
+		set resourceId = #{resourceId}, roleId = #{roleId}, description = #{description}
+		where roleResourceId = #{roleResourceId}
+	</update>
+	<!-- 组合分页 -->
+	<select id="roleResourcePageQuery" parameterType="map" resultType="RoleResource"> 
+		select * 
+		from t_role_resource
+		<where> 
+			<if test="resourceId != null and resourceId !=''">
+				resourceId = #{resourceId}
+			</if>
+			<if test="roleId != null and roleId !=''">
+				and roleId = #{roleId}
+			</if>
+		</where>
+		limit #{pageNumber},#{pageSize}
+	</select>
+	
+	<select id="findRoleResourceQueryCount" parameterType="map" resultType="int">
+		select count(*) from t_role_resource
+		<where> 
+			<if test="resourceId != null and resourceId !=''">
+				resourceId = #{resourceId}
+			</if>
+			<if test="roleId != null and roleId !=''">
+				and roleId = #{roleId}
+			</if>
+		</where>
+	</select>
+	
+	<select id="findResourceParentId" parameterType="String" resultType="String">
+		select parentId from t_resource where resourceId = #{resourceId}
+	</select>
+	
+	<insert id="addRoleResourceTx" parameterType="RoleResource" >
+	 	insert into t_role_resource(roleResourceId, resourceId, roleId) 
+		select #{roleResourceId},#{resourceId},#{roleId} from dual 
+		where not exists(select resourceId ,roleId from t_role_resource where resourceId = #{resourceId} and roleId = #{roleId});
+	</insert>
+	</mapper>

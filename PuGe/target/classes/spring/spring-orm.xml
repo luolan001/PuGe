@@ -34,7 +34,7 @@
     <!-- 3.配置数据访问实现类对象 -->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 	    <!-- basePackage 要扫描的包，如果有多个包要扫描用,隔开 -->
-		<property name="basePackage" value="com.yidu.surewin.system.dao"/>
+		<property name="basePackage" value="com.yidu.surewin.*.dao"/>
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
 	</bean>
 </beans>        
